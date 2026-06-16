@@ -1,0 +1,76 @@
+{% extends "booking/base.html" %}
+{% load static %}
+
+{% block title %}{% if appointment %}Изменить запись{% else %}Записаться{% endif %} | Salon{% endblock %}
+
+{% block content %}
+<section class="stack booking-screen">
+  <div>
+    <p class="eyebrow">{% if appointment %}Изменение{% else %}Новая запись{% endif %}</p>
+    <h1>{% if appointment %}Изменить запись{% else %}Записаться{% endif %}</h1>
+  </div>
+
+  <form method="post" class="form booking-form" id="booking-form"
+        data-availability-url="{% url 'booking:availability_api' %}"
+        data-exclude-id="{% if appointment %}{{ appointment.pk }}{% endif %}"
+        data-initial-date="{{ form.date.value|default:'' }}"
+        data-initial-time="{{ form.time.value|default:'' }}">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <div class="grid two">
+      <label>
+        <span>{{ form.service.label }}</span>
+        {{ form.service }}
+        {{ form.service.errors }}
+      </label>
+      <label>
+        <span>{{ form.barber.label }}</span>
+        {{ form.barber }}
+        {{ form.barber.errors }}
+      </label>
+    </div>
+
+    {{ form.date }}
+    {{ form.time }}
+
+    <section class="panel scheduler">
+      <div class="calendar-header">
+        <button class="icon-button" type="button" id="prev-month" aria-label="Предыдущий месяц">‹</button>
+        <h2 id="calendar-title"></h2>
+        <button class="icon-button" type="button" id="next-month" aria-label="Следующий месяц">›</button>
+      </div>
+      <div class="weekdays">
+        <span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span>
+      </div>
+      <div class="calendar-grid" id="calendar-grid"></div>
+    </section>
+
+    <section class="panel slots-panel">
+      <h2>Выберите дату и время записи:</h2>
+      <div class="slots" id="slots"></div>
+    </section>
+
+    <section class="panel confirmation">
+      <h2>Выбранные параметры</h2>
+      <dl class="summary">
+        <div><dt>Услуга</dt><dd id="summary-service">—</dd></div>
+        <div><dt>Дата</dt><dd id="summary-date">—</dd></div>
+        <div><dt>Время</dt><dd id="summary-time">—</dd></div>
+        <div><dt>Стоимость</dt><dd id="summary-price">—</dd></div>
+      </dl>
+      <label>
+        <span>{{ form.comment.label }}</span>
+        {{ form.comment }}
+        {{ form.comment.errors }}
+      </label>
+      <button class="button primary" id="submit-button" type="submit" disabled>
+        {% if appointment %}Сохранить запись{% else %}Записаться{% endif %}
+      </button>
+    </section>
+  </form>
+</section>
+
+{{ service_data|json_script:"service-data" }}
+<script src="{% static 'booking/booking.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "booking/base.html" %}
+
+{% block title %}Мои записи | Salon{% endblock %}
+
+{% block content %}
+<section class="stack">
+  <div>
+    <p class="eyebrow">{{ visitor.name }}</p>
+    <h1>Мои записи</h1>
+  </div>
+
+  {% if appointment %}
+    {% if request.GET.created %}
+      <div class="success-box">
+        <h2>Вы записаны на прием</h2>
+        <dl class="summary">
+          <div><dt>Дата</dt><dd>{{ appointment.starts_at|date:"d.m.Y" }}</dd></div>
+          <div><dt>Время</dt><dd>{{ appointment.starts_at|date:"H:i" }}</dd></div>
+          <div><dt>Услуга</dt><dd>{{ appointment.service.name }}</dd></div>
+        </dl>
+      </div>
+    {% endif %}
+
+    <article class="panel appointment-card">
+      <div>
+        <p class="eyebrow">{{ appointment.barber.name }}</p>
+        <h2>{{ appointment.starts_at|date:"d.m.Y H:i" }}</h2>
+      </div>
+      <dl class="summary">
+        <div><dt>Услуга</dt><dd>{{ appointment.service.name }}</dd></div>
+        <div><dt>Стоимость</dt><dd>{{ appointment.price_snapshot|floatformat:0 }} ₽</dd></div>
+        <div><dt>Длительность</dt><dd>{{ appointment.duration_minutes_snapshot }} мин.</dd></div>
+      </dl>
+      {% if appointment.comment %}
+        <p class="comment">{{ appointment.comment }}</p>
+      {% endif %}
+      <div class="actions">
+        <a class="button" href="{% url 'booking:appointment_edit' appointment.pk %}">Изменить запись</a>
+        <form method="post" action="{% url 'booking:appointment_cancel' appointment.pk %}">
+          {% csrf_token %}
+          <button class="button danger" type="submit">Отменить запись</button>
+        </form>
+      </div>
+    </article>
+  {% else %}
+    <article class="panel empty-state">
+      <h2>Активных записей нет</h2>
+      <a class="button primary" href="{% url 'booking:appointment_new' %}">Записаться</a>
+    </article>
+  {% endif %}
+</section>
+{% endblock %}

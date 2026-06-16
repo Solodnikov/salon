@@ -1,0 +1,24 @@
+{% extends "booking/base.html" %}
+
+{% block title %}Вход | Salon{% endblock %}
+
+{% block content %}
+<section class="panel auth-panel">
+  <h1>Запись к парикмахеру</h1>
+  <form method="post" class="form">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <label>
+      <span>{{ form.name.label }}</span>
+      {{ form.name }}
+      {{ form.name.errors }}
+    </label>
+    <label>
+      <span>{{ form.phone.label }}</span>
+      {{ form.phone }}
+      {{ form.phone.errors }}
+    </label>
+    <button class="button primary" type="submit">Войти</button>
+  </form>
+</section>
+{% endblock %}

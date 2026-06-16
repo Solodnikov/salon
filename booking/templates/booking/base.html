@@ -1,0 +1,33 @@
+{% load static %}
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Salon{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'booking/styles.css' %}">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="{% url 'booking:appointments' %}">Salon</a>
+    <nav class="nav">
+      {% if request.session.visitor_id %}
+        <a href="{% url 'booking:appointments' %}">Мои записи</a>
+        <a href="{% url 'booking:logout' %}">Выйти</a>
+      {% endif %}
+      <a href="/admin/">Админка</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    {% if messages %}
+      <div class="messages">
+        {% for message in messages %}
+          <div class="message {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>
